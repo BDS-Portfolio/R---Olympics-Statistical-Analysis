@@ -1,0 +1,1902 @@
+---
+title: "Data Viz 502 - Mens 100m Only"
+author: "Rochelle Rafn"
+date: "11/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(rvest)
+library(dplyr)
+library(plotly)
+```
+
+### Are humans getting faster? Or is it that more are participating?
+
+#### 100m Mens and Womens races in the Olympics over the last 100 years
+##### Adidas, established in Herzogenaurach, Germany in 1949. Founded by Adolf "Adi" Dassler and brother Rudolf they developed spiked running shoes (spikes) for multiple athletic events. To enhance the quliaty of spiked athletic footwear, he transitioned from a previous model of heavy metal spikes to utilizing canvas and rubber. 1936 they convinced sprinter Jesse Owens to use the hand made spikes at the 1936 Summer Olympics (received 4 gold medals)
+##### Nike, established in Eugene, OR 1964. Originally known as "Blue Ribbon Sports (BRS)" founded at U of O track athlete Phil Knight and his coach Bill Bowerman. The company initially operated in Eugene, OR as a distributor for Japanese shoe maker Onitsuka Tiger, making most sales at track meets out of Knights car. Otis Davis, 1960 Olympic gold medalist, claims Bowerman made the first pair of Nike shoes for him contradicting a claim they were made for Phil Knight. 
+##### Reebok, established in Bolton, UK in 1958 - In 1895 Joseph William Foster designed earliest spiked running shoes in the beginning. Opened a small factory called Olympic Works and became famous for "running pumps". The company began distributing shoes across the Union Jack flag worn by British athletes. They were made amous by 100m champion Harold Abrahams in the 1924 Paris Olympics (Chariots of Fire). 1958 founded "Reebok" (after a type of African antelope)
+
+#### Rio de Janeiro 2016
+```{r}
+rio_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_2016_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-rio_men_100m%>%html_table(fill=TRUE)
+rio_men_100m_1<-tables[[11]]
+rio_men_100m_2<-tables[[12]]
+rio_men_100m_3<-tables[[13]]
+rio_men_100m_4<-tables[[14]]
+rio_men_100m_5<-tables[[15]]
+rio_men_100m_6<-tables[[16]]
+rio_men_100m_7<-tables[[17]]
+rio_men_100m_8<-tables[[18]]
+rio_men_100m_9<-tables[[19]]
+rio_men_100m_10<-tables[[20]]
+rio_men_100m_11<-tables[[21]]
+rio_men_100m_12<-tables[[22]]
+
+rio_men_100m_1 <- rio_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+rio_men_100m_2 <- rio_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+rio_men_100m_3 <- rio_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+rio_men_100m_4 <- rio_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+rio_men_100m_5 <- rio_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+rio_men_100m_6 <- rio_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+rio_men_100m_7 <- rio_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+rio_men_100m_8 <- rio_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+rio_men_100m_9 <- rio_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+rio_men_100m_10 <- rio_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+rio_men_100m_11 <- rio_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+rio_men_100m_12 <- rio_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+rio_men_100m_all <- bind_rows(rio_men_100m_1, rio_men_100m_2, rio_men_100m_3, rio_men_100m_4, rio_men_100m_5, rio_men_100m_6, rio_men_100m_7, rio_men_100m_8, rio_men_100m_9, rio_men_100m_10, rio_men_100m_11, rio_men_100m_12)
+
+rio_men_100m_all <- rio_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=2016,"Host City" ="Rio de Janeiro", "Host Country"="Brazil")
+
+rio_men_100m_all[92, 1] <- "Gold"
+rio_men_100m_all[93, 1] <- "Silver"
+rio_men_100m_all[94, 1] <- "Bronze"
+
+head(rio_men_100m_all)
+```
+
+#### London 2012
+```{r}
+lon12_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_2012_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-lon12_men_100m%>%html_table(fill=TRUE)
+lon12_men_100m_1<-tables[[12]]
+lon12_men_100m_2<-tables[[13]]
+lon12_men_100m_3<-tables[[14]]
+lon12_men_100m_4<-tables[[15]]
+lon12_men_100m_5<-tables[[16]]
+lon12_men_100m_6<-tables[[17]]
+lon12_men_100m_7<-tables[[18]]
+lon12_men_100m_8<-tables[[19]]
+lon12_men_100m_9<-tables[[20]]
+lon12_men_100m_10<-tables[[21]]
+lon12_men_100m_11<-tables[[22]]
+
+lon12_men_100m_1 <- lon12_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+lon12_men_100m_2 <- lon12_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+lon12_men_100m_3 <- lon12_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+lon12_men_100m_4 <- lon12_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+lon12_men_100m_5 <- lon12_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+lon12_men_100m_6 <- lon12_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+lon12_men_100m_7 <- lon12_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+lon12_men_100m_8 <- lon12_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+lon12_men_100m_9 <- lon12_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+lon12_men_100m_10 <- lon12_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+lon12_men_100m_11 <- lon12_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+lon12_men_100m_all <- bind_rows(lon12_men_100m_1, lon12_men_100m_2, lon12_men_100m_3, lon12_men_100m_4, lon12_men_100m_5, lon12_men_100m_6, lon12_men_100m_7, lon12_men_100m_8, lon12_men_100m_9, lon12_men_100m_10, lon12_men_100m_11)
+
+lon12_men_100m_all <- lon12_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=2012,"Host City" ="London", "Host Country"="United Kingdom")
+
+lon12_men_100m_all[78, 1] <- "Gold"
+lon12_men_100m_all[79, 1] <- "Silver"
+lon12_men_100m_all[80, 1] <- "Bronze"
+
+head(lon12_men_100m_all)
+```
+
+#### Beijing 2008
+```{r}
+bei_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_2008_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-bei_men_100m%>%html_table(fill=TRUE)
+bei_men_100m_1<-tables[[7]]
+bei_men_100m_2<-tables[[8]]
+bei_men_100m_3<-tables[[9]]
+bei_men_100m_4<-tables[[10]]
+bei_men_100m_5<-tables[[11]]
+bei_men_100m_6<-tables[[12]]
+bei_men_100m_7<-tables[[13]]
+bei_men_100m_8<-tables[[14]]
+bei_men_100m_9<-tables[[15]]
+bei_men_100m_10<-tables[[16]]
+bei_men_100m_11<-tables[[17]]
+bei_men_100m_12<-tables[[18]]
+bei_men_100m_13<-tables[[19]]
+bei_men_100m_14<-tables[[20]]
+bei_men_100m_15<-tables[[21]]
+bei_men_100m_16<-tables[[22]]
+bei_men_100m_17<-tables[[23]]
+bei_men_100m_18<-tables[[25]]
+
+
+bei_men_100m_1 <- bei_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+bei_men_100m_2 <- bei_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+bei_men_100m_3 <- bei_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+bei_men_100m_4 <- bei_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+bei_men_100m_5 <- bei_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+bei_men_100m_6 <- bei_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+bei_men_100m_7 <- bei_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+bei_men_100m_8 <- bei_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+bei_men_100m_9 <- bei_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+bei_men_100m_10 <- bei_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+bei_men_100m_11 <- bei_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bei_men_100m_12 <- bei_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bei_men_100m_13 <- bei_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bei_men_100m_14 <- bei_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bei_men_100m_15 <- bei_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bei_men_100m_16 <- bei_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+bei_men_100m_17 <- bei_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+bei_men_100m_18 <- bei_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+bei_men_100m_all <- bind_rows(bei_men_100m_1, bei_men_100m_2, bei_men_100m_3, bei_men_100m_4, bei_men_100m_5, bei_men_100m_6, bei_men_100m_7, bei_men_100m_8, bei_men_100m_9, bei_men_100m_10, bei_men_100m_11,bei_men_100m_12,bei_men_100m_13,bei_men_100m_14,bei_men_100m_15,bei_men_100m_16,bei_men_100m_17,bei_men_100m_18)
+
+bei_men_100m_all <- bei_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=2008,"Host City" ="Beijing", "Host Country"="China")
+
+bei_men_100m_all[134,1]<- "Gold"
+bei_men_100m_all[135,1]<- "Silver"
+bei_men_100m_all[136,1]<- "Bronze"
+
+head(bei_men_100m_all)
+```
+
+#### Athens 2004
+```{r}
+ath_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_2004_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-ath_men_100m%>%html_table(fill=TRUE)
+ath_men_100m_1<-tables[[6]]
+ath_men_100m_2<-tables[[7]]
+ath_men_100m_3<-tables[[8]]
+ath_men_100m_4<-tables[[9]]
+ath_men_100m_5<-tables[[10]]
+ath_men_100m_6<-tables[[11]]
+ath_men_100m_7<-tables[[12]]
+ath_men_100m_8<-tables[[13]]
+ath_men_100m_9<-tables[[14]]
+ath_men_100m_10<-tables[[15]]
+ath_men_100m_11<-tables[[16]]
+ath_men_100m_12<-tables[[17]]
+ath_men_100m_13<-tables[[18]]
+ath_men_100m_14<-tables[[19]]
+ath_men_100m_15<-tables[[20]]
+ath_men_100m_16<-tables[[21]]
+ath_men_100m_17<-tables[[22]]
+ath_men_100m_18<-tables[[23]]
+
+
+ath_men_100m_1 <- ath_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+ath_men_100m_2 <- ath_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+ath_men_100m_3 <- ath_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+ath_men_100m_4 <- ath_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+ath_men_100m_5 <- ath_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+ath_men_100m_6 <- ath_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+ath_men_100m_7 <- ath_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+ath_men_100m_8 <- ath_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+ath_men_100m_9 <- ath_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+ath_men_100m_10 <- ath_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+ath_men_100m_11 <- ath_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ath_men_100m_12 <- ath_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ath_men_100m_13 <- ath_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ath_men_100m_14 <- ath_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ath_men_100m_15 <- ath_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ath_men_100m_16 <- ath_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ath_men_100m_17 <- ath_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ath_men_100m_18 <- ath_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+ath_men_100m_all <- bind_rows(ath_men_100m_1, ath_men_100m_2, ath_men_100m_3, ath_men_100m_4, ath_men_100m_5, ath_men_100m_6, ath_men_100m_7, ath_men_100m_8, ath_men_100m_9, ath_men_100m_10, ath_men_100m_11, ath_men_100m_12, ath_men_100m_13, ath_men_100m_14, ath_men_100m_15, ath_men_100m_16, ath_men_100m_17, ath_men_100m_18)
+
+ath_men_100m_all <- ath_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=2004,"Host City" ="Athens", "Host Country"="Greece")
+
+ath_men_100m_all[136,1]<-"Gold"
+ath_men_100m_all[137,1]<-"Silver"
+ath_men_100m_all[138,1]<-"Bronze"
+
+head(ath_men_100m_all)
+```
+
+#### Sydney 2000
+```{r}
+syd_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_2000_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-syd_men_100m%>%html_table(fill=TRUE)
+syd_men_100m_1<-tables[[6]]
+syd_men_100m_2<-tables[[7]]
+syd_men_100m_3<-tables[[8]]
+syd_men_100m_4<-tables[[9]]
+syd_men_100m_5<-tables[[10]]
+syd_men_100m_6<-tables[[11]]
+syd_men_100m_7<-tables[[12]]
+syd_men_100m_8<-tables[[13]]
+syd_men_100m_9<-tables[[14]]
+syd_men_100m_10<-tables[[15]]
+syd_men_100m_11<-tables[[16]]
+syd_men_100m_12<-tables[[17]]
+syd_men_100m_13<-tables[[18]]
+syd_men_100m_14<-tables[[19]]
+syd_men_100m_15<-tables[[20]]
+syd_men_100m_16<-tables[[21]]
+syd_men_100m_17<-tables[[22]]
+syd_men_100m_18<-tables[[23]]
+syd_men_100m_19<-tables[[24]]
+
+syd_men_100m_1 <- syd_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+syd_men_100m_2 <- syd_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+syd_men_100m_3 <- syd_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+syd_men_100m_4 <- syd_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+syd_men_100m_5 <- syd_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+syd_men_100m_6 <- syd_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+syd_men_100m_7 <- syd_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+syd_men_100m_8 <- syd_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+syd_men_100m_9 <- syd_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+syd_men_100m_10 <- syd_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+syd_men_100m_11 <- syd_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+syd_men_100m_12 <- syd_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+syd_men_100m_13 <- syd_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+syd_men_100m_14 <- syd_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+syd_men_100m_15 <- syd_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+syd_men_100m_16 <- syd_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+syd_men_100m_17 <- syd_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+syd_men_100m_18 <- syd_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+syd_men_100m_19 <- syd_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+syd_men_100m_all <- bind_rows(syd_men_100m_1, syd_men_100m_2, syd_men_100m_3, syd_men_100m_4, syd_men_100m_5, syd_men_100m_6, syd_men_100m_7, syd_men_100m_8, syd_men_100m_9, syd_men_100m_10, syd_men_100m_11, syd_men_100m_12, syd_men_100m_13, syd_men_100m_14, syd_men_100m_15, syd_men_100m_16, syd_men_100m_17, syd_men_100m_18, syd_men_100m_19)
+
+syd_men_100m_all <- syd_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=2000,"Host City" ="Sydney", "Host Country"="Australia")
+
+syd_men_100m_all[152,1]<- "Gold"
+syd_men_100m_all[153,1]<- "Silver"
+syd_men_100m_all[154,1]<- "Bronze"
+
+head(syd_men_100m_all)
+```
+
+#### Atlanta 1996
+```{r}
+atl_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1996_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-atl_men_100m%>%html_table(fill=TRUE)
+atl_men_100m_1<-tables[[6]]
+atl_men_100m_2<-tables[[7]]
+atl_men_100m_3<-tables[[8]]
+atl_men_100m_4<-tables[[9]]
+atl_men_100m_5<-tables[[10]]
+atl_men_100m_6<-tables[[11]]
+atl_men_100m_7<-tables[[12]]
+atl_men_100m_8<-tables[[13]]
+atl_men_100m_9<-tables[[14]]
+atl_men_100m_10<-tables[[15]]
+atl_men_100m_11<-tables[[16]]
+atl_men_100m_12<-tables[[17]]
+atl_men_100m_13<-tables[[18]]
+atl_men_100m_14<-tables[[19]]
+atl_men_100m_15<-tables[[20]]
+atl_men_100m_16<-tables[[21]]
+atl_men_100m_17<-tables[[22]]
+atl_men_100m_18<-tables[[23]]
+atl_men_100m_19<-tables[[24]]
+atl_men_100m_20<-tables[[25]]
+
+atl_men_100m_1 <- atl_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_2 <- atl_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_3 <- atl_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_4 <- atl_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_5 <- atl_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_6 <- atl_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_7 <- atl_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_8 <- atl_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_9 <- atl_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_10 <- atl_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_11 <- atl_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+atl_men_100m_12 <- atl_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+atl_men_100m_13 <- atl_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+atl_men_100m_14 <- atl_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+atl_men_100m_15 <- atl_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+atl_men_100m_16 <- atl_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+atl_men_100m_17 <- atl_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+atl_men_100m_18 <- atl_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+atl_men_100m_19 <- atl_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+atl_men_100m_20 <- atl_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+atl_men_100m_all <- bind_rows(atl_men_100m_1, atl_men_100m_2, atl_men_100m_3, atl_men_100m_4, atl_men_100m_5, atl_men_100m_6, atl_men_100m_7, atl_men_100m_8, atl_men_100m_9, atl_men_100m_10, atl_men_100m_11, atl_men_100m_12, atl_men_100m_13, atl_men_100m_14, atl_men_100m_15, atl_men_100m_16, atl_men_100m_17, atl_men_100m_18, atl_men_100m_19, atl_men_100m_20)
+
+atl_men_100m_all <- atl_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1996,"Host City" ="Atlanta", "Host Country"="United States")
+
+atl_men_100m_all[162,1]<- "Gold"
+atl_men_100m_all[163,1]<- "Silver"
+atl_men_100m_all[164,1]<- "Bronze"
+
+head(atl_men_100m_all)
+```
+
+#### Barcelona 1992
+```{r}
+bar_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1992_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-bar_men_100m%>%html_table(fill=TRUE)
+bar_men_100m_1<-tables[[5]]
+bar_men_100m_2<-tables[[6]]
+bar_men_100m_3<-tables[[7]]
+bar_men_100m_4<-tables[[8]]
+bar_men_100m_5<-tables[[9]]
+bar_men_100m_6<-tables[[10]]
+bar_men_100m_7<-tables[[11]]
+bar_men_100m_8<-tables[[12]]
+bar_men_100m_9<-tables[[13]]
+bar_men_100m_10<-tables[[14]]
+bar_men_100m_11<-tables[[15]]
+bar_men_100m_12<-tables[[16]]
+bar_men_100m_13<-tables[[17]]
+bar_men_100m_14<-tables[[18]]
+bar_men_100m_15<-tables[[19]]
+bar_men_100m_16<-tables[[20]]
+bar_men_100m_17<-tables[[21]]
+
+bar_men_100m_1 <- bar_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+bar_men_100m_2 <- bar_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+bar_men_100m_3 <- bar_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+bar_men_100m_4 <- bar_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+bar_men_100m_5 <- bar_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+bar_men_100m_6 <- bar_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+bar_men_100m_7 <- bar_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+bar_men_100m_8 <- bar_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+bar_men_100m_9 <- bar_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+bar_men_100m_10 <- bar_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+bar_men_100m_11 <- bar_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bar_men_100m_12 <- bar_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bar_men_100m_13 <- bar_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bar_men_100m_14 <- bar_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+bar_men_100m_15 <- bar_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+bar_men_100m_16 <- bar_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+bar_men_100m_17 <- bar_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+bar_men_100m_all <- bind_rows(bar_men_100m_1, bar_men_100m_2, bar_men_100m_3, bar_men_100m_4, bar_men_100m_5, bar_men_100m_6, bar_men_100m_7, bar_men_100m_8, bar_men_100m_9, bar_men_100m_10, bar_men_100m_11, bar_men_100m_12, bar_men_100m_13, bar_men_100m_14, bar_men_100m_15, bar_men_100m_16, bar_men_100m_17)
+
+bar_men_100m_all <- bar_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1992,"Host City" ="Barcelona", "Host Country"="Spain")
+
+bar_men_100m_all[126,1]<- "Gold"
+bar_men_100m_all[127,1]<- "Silver"
+bar_men_100m_all[128,1]<- "Bronze"
+
+head(bar_men_100m_all)
+```
+
+#### Seoul 1988
+```{r}
+seo_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1988_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-seo_men_100m%>%html_table(fill=TRUE)
+seo_men_100m_1<-tables[[6]]
+seo_men_100m_2<-tables[[7]]
+seo_men_100m_3<-tables[[8]]
+seo_men_100m_4<-tables[[9]]
+seo_men_100m_5<-tables[[10]]
+seo_men_100m_6<-tables[[11]]
+seo_men_100m_7<-tables[[12]]
+seo_men_100m_8<-tables[[13]]
+seo_men_100m_9<-tables[[14]]
+seo_men_100m_10<-tables[[15]]
+seo_men_100m_11<-tables[[16]]
+seo_men_100m_12<-tables[[17]]
+seo_men_100m_13<-tables[[18]]
+seo_men_100m_14<-tables[[19]]
+seo_men_100m_15<-tables[[20]]
+seo_men_100m_16<-tables[[21]]
+seo_men_100m_17<-tables[[22]]
+seo_men_100m_18<-tables[[23]]
+seo_men_100m_19<-tables[[24]]
+seo_men_100m_20<-tables[[25]]
+seo_men_100m_21<-tables[[26]]
+seo_men_100m_22<-tables[[27]]
+
+seo_men_100m_1 <- seo_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+seo_men_100m_2 <- seo_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+seo_men_100m_3 <- seo_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+seo_men_100m_4 <- seo_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+seo_men_100m_5 <- seo_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+seo_men_100m_6 <- seo_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+seo_men_100m_7 <- seo_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+seo_men_100m_8 <- seo_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+seo_men_100m_9 <- seo_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+seo_men_100m_10 <- seo_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+seo_men_100m_11 <- seo_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+seo_men_100m_12 <- seo_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+seo_men_100m_13 <- seo_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "13")
+seo_men_100m_14 <- seo_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_15 <- seo_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_16 <- seo_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_17 <- seo_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_18 <- seo_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_19 <- seo_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+seo_men_100m_20 <- seo_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+seo_men_100m_21 <- seo_men_100m_21 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+seo_men_100m_22 <- seo_men_100m_22 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+seo_men_100m_all <- bind_rows(seo_men_100m_1, seo_men_100m_2, seo_men_100m_3, seo_men_100m_4, seo_men_100m_5, seo_men_100m_6, seo_men_100m_7, seo_men_100m_8, seo_men_100m_9, seo_men_100m_10, seo_men_100m_11, seo_men_100m_12, seo_men_100m_13, seo_men_100m_14, seo_men_100m_15, seo_men_100m_16, seo_men_100m_17, seo_men_100m_18, seo_men_100m_19, seo_men_100m_20, seo_men_100m_21, seo_men_100m_22)
+
+seo_men_100m_all <- seo_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1988,"Host City" ="Seoul", "Host Country"="South Korea")
+
+seo_men_100m_all[165,1]<- "Gold"
+seo_men_100m_all[166,1]<- "Silver"
+seo_men_100m_all[167,1]<- "Bronze"
+
+head(seo_men_100m_all)
+```
+
+#### Los Angeles 1984
+```{r}
+los_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1984_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-los_men_100m%>%html_table(fill=TRUE)
+los_men_100m_1<-tables[[5]]
+los_men_100m_2<-tables[[6]]
+los_men_100m_3<-tables[[7]]
+los_men_100m_4<-tables[[8]]
+los_men_100m_5<-tables[[9]]
+los_men_100m_6<-tables[[10]]
+los_men_100m_7<-tables[[11]]
+los_men_100m_8<-tables[[12]]
+los_men_100m_9<-tables[[13]]
+los_men_100m_10<-tables[[14]]
+los_men_100m_11<-tables[[15]]
+los_men_100m_12<-tables[[16]]
+los_men_100m_13<-tables[[17]]
+los_men_100m_14<-tables[[18]]
+los_men_100m_15<-tables[[19]]
+los_men_100m_16<-tables[[20]]
+los_men_100m_17<-tables[[21]]
+los_men_100m_18<-tables[[22]]
+los_men_100m_19<-tables[[23]]
+
+
+los_men_100m_1 <- los_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+los_men_100m_2 <- los_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+los_men_100m_3 <- los_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+los_men_100m_4 <- los_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+los_men_100m_5 <- los_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+los_men_100m_6 <- los_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+los_men_100m_7 <- los_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+los_men_100m_8 <- los_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+los_men_100m_9 <- los_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+los_men_100m_10 <- los_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+los_men_100m_11 <- los_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+los_men_100m_12 <- los_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los_men_100m_13 <- los_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los_men_100m_14 <- los_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los_men_100m_15 <- los_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los_men_100m_16 <- los_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los_men_100m_17 <- los_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+los_men_100m_18 <- los_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+los_men_100m_19 <- los_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+los_men_100m_all <- bind_rows(los_men_100m_1, los_men_100m_2, los_men_100m_3, los_men_100m_4, los_men_100m_5, los_men_100m_6, los_men_100m_7, los_men_100m_8, los_men_100m_9, los_men_100m_10, los_men_100m_11, los_men_100m_12, los_men_100m_13, los_men_100m_14, los_men_100m_15, los_men_100m_16, los_men_100m_17, los_men_100m_18, los_men_100m_19)
+
+los_men_100m_all <- los_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1984,"Host City" ="Los Angeles", "Host Country"="United States")
+
+los_men_100m_all[138,1]<- "Gold"
+los_men_100m_all[139,1]<- "Silver"
+los_men_100m_all[140,1]<- "Bronze"
+
+head(los_men_100m_all)
+```
+
+
+#### Moscow 1980
+```{r}
+mos_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1980_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-mos_men_100m%>%html_table(fill=TRUE)
+mos_men_100m_1<-tables[[5]]
+mos_men_100m_2<-tables[[6]]
+mos_men_100m_3<-tables[[7]]
+mos_men_100m_4<-tables[[8]]
+mos_men_100m_5<-tables[[9]]
+mos_men_100m_6<-tables[[10]]
+mos_men_100m_7<-tables[[11]]
+mos_men_100m_8<-tables[[12]]
+mos_men_100m_9<-tables[[13]]
+mos_men_100m_10<-tables[[14]]
+mos_men_100m_11<-tables[[15]]
+mos_men_100m_12<-tables[[16]]
+mos_men_100m_13<-tables[[17]]
+mos_men_100m_14<-tables[[18]]
+mos_men_100m_15<-tables[[19]]
+mos_men_100m_16<-tables[[20]]
+
+mos_men_100m_1 <- mos_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+mos_men_100m_2 <- mos_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+mos_men_100m_3 <- mos_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+mos_men_100m_4 <- mos_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+mos_men_100m_5 <- mos_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+mos_men_100m_6 <- mos_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+mos_men_100m_7 <- mos_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+mos_men_100m_8 <- mos_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+mos_men_100m_9 <- mos_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+mos_men_100m_10 <- mos_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mos_men_100m_11 <- mos_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mos_men_100m_12 <- mos_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mos_men_100m_13 <- mos_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mos_men_100m_14 <- mos_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mos_men_100m_15 <- mos_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mos_men_100m_16 <- mos_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+mos_men_100m_all <- bind_rows(mos_men_100m_1, mos_men_100m_2, mos_men_100m_3, mos_men_100m_4, mos_men_100m_5, mos_men_100m_6, mos_men_100m_7, mos_men_100m_8, mos_men_100m_9, mos_men_100m_10, mos_men_100m_11, mos_men_100m_12, mos_men_100m_13, mos_men_100m_14, mos_men_100m_15, mos_men_100m_16)
+
+mos_men_100m_all <- mos_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1980,"Host City" ="Moscow", "Host Country"="Russia")
+
+mos_men_100m_all[114,1]<- "Gold"
+mos_men_100m_all[115,1]<- "Silver"
+mos_men_100m_all[116,1]<- "Bronze"
+
+head(mos_men_100m_all)
+```
+
+#### Montreal 1976
+```{r}
+mon_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1976_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-mon_men_100m%>%html_table(fill=TRUE)
+mon_men_100m_1<-tables[[5]]
+mon_men_100m_2<-tables[[6]]
+mon_men_100m_3<-tables[[7]]
+mon_men_100m_4<-tables[[8]]
+mon_men_100m_5<-tables[[9]]
+mon_men_100m_6<-tables[[10]]
+mon_men_100m_7<-tables[[11]]
+mon_men_100m_8<-tables[[12]]
+mon_men_100m_9<-tables[[13]]
+mon_men_100m_10<-tables[[14]]
+mon_men_100m_11<-tables[[15]]
+mon_men_100m_12<-tables[[16]]
+mon_men_100m_13<-tables[[17]]
+mon_men_100m_14<-tables[[18]]
+mon_men_100m_15<-tables[[19]]
+mon_men_100m_16<-tables[[20]]
+
+mon_men_100m_1 <- mon_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+mon_men_100m_2 <- mon_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+mon_men_100m_3 <- mon_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+mon_men_100m_4 <- mon_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+mon_men_100m_5 <- mon_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+mon_men_100m_6 <- mon_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+mon_men_100m_7 <- mon_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+mon_men_100m_8 <- mon_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+mon_men_100m_9 <- mon_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+mon_men_100m_10 <- mon_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mon_men_100m_11 <- mon_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mon_men_100m_12 <- mon_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mon_men_100m_13 <- mon_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mon_men_100m_14 <- mon_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mon_men_100m_15 <- mon_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mon_men_100m_16 <- mon_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+mon_men_100m_all <- bind_rows(mon_men_100m_1, mon_men_100m_2, mon_men_100m_3, mon_men_100m_4, mon_men_100m_5, mon_men_100m_6, mon_men_100m_7, mon_men_100m_8, mon_men_100m_9, mon_men_100m_10, mon_men_100m_11, mon_men_100m_12, mon_men_100m_13, mon_men_100m_14, mon_men_100m_15, mon_men_100m_16)
+
+mon_men_100m_all <- mon_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1976,"Host City" ="Montreal", "Host Country"="Canada")
+
+mon_men_100m_all[110,1]<- "Gold"
+mon_men_100m_all[111,1]<- "Silver"
+mon_men_100m_all[112,1]<- "Bronze"
+
+head(mon_men_100m_all)
+```
+
+#### Munich 1972
+```{r}
+mun_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1972_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-mun_men_100m%>%html_table(fill=TRUE)
+mun_men_100m_1<-tables[[5]]
+mun_men_100m_2<-tables[[6]]
+mun_men_100m_3<-tables[[7]]
+mun_men_100m_4<-tables[[8]]
+mun_men_100m_5<-tables[[9]]
+mun_men_100m_6<-tables[[10]]
+mun_men_100m_7<-tables[[11]]
+mun_men_100m_8<-tables[[12]]
+mun_men_100m_9<-tables[[13]]
+mun_men_100m_10<-tables[[14]]
+mun_men_100m_11<-tables[[15]]
+mun_men_100m_12<-tables[[16]]
+mun_men_100m_13<-tables[[17]]
+mun_men_100m_14<-tables[[18]]
+mun_men_100m_15<-tables[[19]]
+mun_men_100m_16<-tables[[20]]
+mun_men_100m_17<-tables[[21]]
+mun_men_100m_18<-tables[[22]]
+mun_men_100m_19<-tables[[23]]
+mun_men_100m_20<-tables[[24]]
+
+mun_men_100m_1 <- mun_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+mun_men_100m_2 <- mun_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+mun_men_100m_3 <- mun_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+mun_men_100m_4 <- mun_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+mun_men_100m_5 <- mun_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+mun_men_100m_6 <- mun_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+mun_men_100m_7 <- mun_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+mun_men_100m_8 <- mun_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+mun_men_100m_9 <- mun_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+mun_men_100m_10 <- mun_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+mun_men_100m_11 <- mun_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+mun_men_100m_12 <- mun_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+mun_men_100m_13 <- mun_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mun_men_100m_14 <- mun_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mun_men_100m_15 <- mun_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mun_men_100m_16 <- mun_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mun_men_100m_17 <- mun_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mun_men_100m_18 <- mun_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mun_men_100m_19 <- mun_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mun_men_100m_20 <- mun_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+mun_men_100m_all <- bind_rows(mun_men_100m_1, mun_men_100m_2, mun_men_100m_3, mun_men_100m_4, mun_men_100m_5, mun_men_100m_6, mun_men_100m_7, mun_men_100m_8, mun_men_100m_9, mun_men_100m_10, mun_men_100m_11, mun_men_100m_12, mun_men_100m_13, mun_men_100m_14, mun_men_100m_15, mun_men_100m_16, mun_men_100m_17, mun_men_100m_18, mun_men_100m_19, mun_men_100m_20)
+
+mun_men_100m_all <- mun_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1972,"Host City" ="Munich", "Host Country"="Germany")
+
+mun_men_100m_all[139,1]<- "Gold"
+mun_men_100m_all[140,1]<- "Silver"
+mun_men_100m_all[141,1]<- "Bronze"
+
+head(mun_men_100m_all)
+```
+
+#### Mexico City 1968
+```{r}
+mex_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1968_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-mex_men_100m%>%html_table(fill=TRUE)
+mex_men_100m_1<-tables[[5]]
+mex_men_100m_2<-tables[[6]]
+mex_men_100m_3<-tables[[7]]
+mex_men_100m_4<-tables[[8]]
+mex_men_100m_5<-tables[[9]]
+mex_men_100m_6<-tables[[10]]
+mex_men_100m_7<-tables[[11]]
+mex_men_100m_8<-tables[[12]]
+mex_men_100m_9<-tables[[13]]
+mex_men_100m_10<-tables[[14]]
+mex_men_100m_11<-tables[[15]]
+mex_men_100m_12<-tables[[16]]
+mex_men_100m_13<-tables[[17]]
+mex_men_100m_14<-tables[[18]]
+mex_men_100m_15<-tables[[19]]
+mex_men_100m_16<-tables[[20]]
+
+names(mex_men_100m_16)[5] <- "Time"
+
+mex_men_100m_1 <- mex_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+mex_men_100m_2 <- mex_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+mex_men_100m_3 <- mex_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+mex_men_100m_4 <- mex_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+mex_men_100m_5 <- mex_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+mex_men_100m_6 <- mex_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+mex_men_100m_7 <- mex_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+mex_men_100m_8 <- mex_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+mex_men_100m_9 <- mex_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+mex_men_100m_10 <- mex_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mex_men_100m_11 <- mex_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mex_men_100m_12 <- mex_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mex_men_100m_13 <- mex_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mex_men_100m_14 <- mex_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mex_men_100m_15 <- mex_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mex_men_100m_16 <- mex_men_100m_16 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+mex_men_100m_all <- bind_rows(mex_men_100m_1, mex_men_100m_2, mex_men_100m_3, mex_men_100m_4, mex_men_100m_5,  mex_men_100m_6, mex_men_100m_7, mex_men_100m_8, mex_men_100m_9, mex_men_100m_10, mex_men_100m_11, mex_men_100m_12, mex_men_100m_13, mex_men_100m_14, mex_men_100m_15, mex_men_100m_16)
+
+mex_men_100m_all <- mex_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1968,"Host City" ="Mexico City", "Host Country"="Mexico")
+
+mex_men_100m_all[113,1]<- "Gold"
+mex_men_100m_all[114,1]<- "Silver"
+mex_men_100m_all[115,1]<- "Bronze"
+
+head(mex_men_100m_all)
+```
+
+#### Tokyo 1964
+```{r}
+tok_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1964_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-tok_men_100m%>%html_table(fill=TRUE)
+tok_men_100m_1<-tables[[6]]
+tok_men_100m_2<-tables[[7]]
+tok_men_100m_3<-tables[[8]]
+tok_men_100m_4<-tables[[9]]
+tok_men_100m_5<-tables[[10]]
+tok_men_100m_6<-tables[[11]]
+tok_men_100m_7<-tables[[12]]
+tok_men_100m_8<-tables[[13]]
+tok_men_100m_9<-tables[[14]]
+tok_men_100m_10<-tables[[15]]
+tok_men_100m_11<-tables[[16]]
+tok_men_100m_12<-tables[[17]]
+tok_men_100m_13<-tables[[18]]
+tok_men_100m_14<-tables[[19]]
+tok_men_100m_15<-tables[[20]]
+tok_men_100m_16<-tables[[21]]
+tok_men_100m_17<-tables[[22]]
+
+tok_men_100m_1 <- tok_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+tok_men_100m_2 <- tok_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+tok_men_100m_3 <- tok_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+tok_men_100m_4 <- tok_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+tok_men_100m_5 <- tok_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+tok_men_100m_6 <- tok_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+tok_men_100m_7 <- tok_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+tok_men_100m_8 <- tok_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+tok_men_100m_9 <- tok_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+tok_men_100m_10 <- tok_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+tok_men_100m_11 <- tok_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+tok_men_100m_12 <- tok_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+tok_men_100m_13 <- tok_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+tok_men_100m_14 <- tok_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+tok_men_100m_15 <- tok_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+tok_men_100m_16 <- tok_men_100m_16 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+tok_men_100m_17 <- tok_men_100m_17 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+tok_men_100m_all <- bind_rows(tok_men_100m_1, tok_men_100m_2, tok_men_100m_3, tok_men_100m_4, tok_men_100m_5,  tok_men_100m_6, tok_men_100m_7, tok_men_100m_8, tok_men_100m_9, tok_men_100m_10, tok_men_100m_11, tok_men_100m_12, tok_men_100m_13, tok_men_100m_14, tok_men_100m_15, tok_men_100m_16, tok_men_100m_17)
+
+tok_men_100m_all <- tok_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1964,"Host City" ="Tokyo", "Host Country"="Japan")
+
+tok_men_100m_all[119,1]<- "Gold"
+tok_men_100m_all[120,1]<- "Silver"
+tok_men_100m_all[121,1]<- "Bronze"
+
+head(tok_men_100m_all)
+```
+
+#### Rome 1960
+```{r}
+rom_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1960_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-rom_men_100m%>%html_table(fill=TRUE)
+rom_men_100m_1<-tables[[5]]
+rom_men_100m_2<-tables[[6]]
+rom_men_100m_3<-tables[[7]]
+rom_men_100m_4<-tables[[8]]
+rom_men_100m_5<-tables[[9]]
+rom_men_100m_6<-tables[[10]]
+rom_men_100m_7<-tables[[11]]
+rom_men_100m_8<-tables[[12]]
+rom_men_100m_9<-tables[[13]]
+rom_men_100m_10<-tables[[14]]
+rom_men_100m_11<-tables[[15]]
+rom_men_100m_12<-tables[[16]]
+rom_men_100m_13<-tables[[17]]
+rom_men_100m_14<-tables[[18]]
+rom_men_100m_15<-tables[[19]]
+rom_men_100m_16<-tables[[20]]
+
+rom_men_100m_1 <- rom_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+rom_men_100m_2 <- rom_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+rom_men_100m_3 <- rom_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+rom_men_100m_4 <- rom_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+rom_men_100m_5 <- rom_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+rom_men_100m_6 <- rom_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+rom_men_100m_7 <- rom_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+rom_men_100m_8 <- rom_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+rom_men_100m_9 <- rom_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+rom_men_100m_10 <- rom_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+rom_men_100m_11 <- rom_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+rom_men_100m_12 <- rom_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+rom_men_100m_13 <- rom_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+rom_men_100m_14 <- rom_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+rom_men_100m_15 <- rom_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+rom_men_100m_16 <- rom_men_100m_16 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+
+rom_men_100m_all <- bind_rows(rom_men_100m_1, rom_men_100m_2, rom_men_100m_3, rom_men_100m_4, rom_men_100m_5,  rom_men_100m_6, rom_men_100m_7, rom_men_100m_8, rom_men_100m_9, rom_men_100m_10, rom_men_100m_11, rom_men_100m_12, rom_men_100m_13, rom_men_100m_14, rom_men_100m_15, rom_men_100m_16)
+
+rom_men_100m_all <- rom_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1960,"Host City" ="Rome", "Host Country"="Italy")
+
+rom_men_100m_all[99,1]<- "Gold"
+rom_men_100m_all[100,1]<- "Silver"
+rom_men_100m_all[101,1]<- "Bronze"
+
+head(rom_men_100m_all)
+```
+
+#### Melbourne 1956
+```{r}
+mel_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1956_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-mel_men_100m%>%html_table(fill=TRUE)
+mel_men_100m_1<-tables[[5]]
+mel_men_100m_2<-tables[[6]]
+mel_men_100m_3<-tables[[7]]
+mel_men_100m_4<-tables[[8]]
+mel_men_100m_5<-tables[[9]]
+mel_men_100m_6<-tables[[10]]
+mel_men_100m_7<-tables[[11]]
+mel_men_100m_8<-tables[[12]]
+mel_men_100m_9<-tables[[13]]
+mel_men_100m_10<-tables[[14]]
+mel_men_100m_11<-tables[[15]]
+mel_men_100m_12<-tables[[16]]
+mel_men_100m_13<-tables[[17]]
+mel_men_100m_14<-tables[[18]]
+mel_men_100m_15<-tables[[19]]
+mel_men_100m_16<-tables[[20]]
+mel_men_100m_17<-tables[[21]]
+mel_men_100m_18<-tables[[22]]
+mel_men_100m_19<-tables[[23]]
+
+names(mel_men_100m_19)[5] <- "Time"
+
+mel_men_100m_1 <- mel_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+mel_men_100m_2 <- mel_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+mel_men_100m_3 <- mel_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+mel_men_100m_4 <- mel_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+mel_men_100m_5 <- mel_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+mel_men_100m_6 <- mel_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+mel_men_100m_7 <- mel_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+mel_men_100m_8 <- mel_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+mel_men_100m_9 <- mel_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+mel_men_100m_10 <- mel_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+mel_men_100m_11 <- mel_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+mel_men_100m_12 <- mel_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+mel_men_100m_13 <- mel_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mel_men_100m_14 <- mel_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mel_men_100m_15 <- mel_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mel_men_100m_16 <- mel_men_100m_16 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+mel_men_100m_17 <- mel_men_100m_17 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mel_men_100m_18 <- mel_men_100m_18 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+mel_men_100m_19 <- mel_men_100m_19 %>% transform(Time  = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+
+mel_men_100m_all <- bind_rows(mel_men_100m_1, mel_men_100m_2, mel_men_100m_3, mel_men_100m_4, mel_men_100m_5,  mel_men_100m_6, mel_men_100m_7, mel_men_100m_8, mel_men_100m_9, mel_men_100m_10, mel_men_100m_11, mel_men_100m_12, mel_men_100m_13, mel_men_100m_14, mel_men_100m_15, mel_men_100m_16, mel_men_100m_17, mel_men_100m_18, mel_men_100m_19)
+
+mel_men_100m_all <- mel_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1956,"Host City" ="Melbourne", "Host Country"="Australia")
+
+mel_men_100m_all[102,1]<- "Gold"
+mel_men_100m_all[103,1]<- "Silver"
+mel_men_100m_all[104,1]<- "Bronze"
+
+head(mel_men_100m_all)
+```
+
+#### Helsinki 1952
+```{r}
+hel_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1952_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-hel_men_100m%>%html_table(fill=TRUE)
+hel_men_100m_1<-tables[[5]]
+hel_men_100m_2<-tables[[6]]
+hel_men_100m_3<-tables[[7]]
+hel_men_100m_4<-tables[[8]]
+hel_men_100m_5<-tables[[9]]
+hel_men_100m_6<-tables[[10]]
+hel_men_100m_7<-tables[[11]]
+hel_men_100m_8<-tables[[12]]
+hel_men_100m_9<-tables[[13]]
+hel_men_100m_10<-tables[[14]]
+hel_men_100m_11<-tables[[15]]
+hel_men_100m_12<-tables[[16]]
+hel_men_100m_13<-tables[[17]]
+hel_men_100m_14<-tables[[18]]
+hel_men_100m_15<-tables[[19]]
+hel_men_100m_16<-tables[[20]]
+hel_men_100m_17<-tables[[21]]
+hel_men_100m_18<-tables[[22]]
+hel_men_100m_19<-tables[[23]]
+
+hel_men_100m_1 <- hel_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+hel_men_100m_2 <- hel_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+hel_men_100m_3 <- hel_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+hel_men_100m_4 <- hel_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+hel_men_100m_5 <- hel_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+hel_men_100m_6 <- hel_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+hel_men_100m_7 <- hel_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+hel_men_100m_8 <- hel_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+hel_men_100m_9 <- hel_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+hel_men_100m_10 <- hel_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+hel_men_100m_11 <- hel_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+hel_men_100m_12 <- hel_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+hel_men_100m_13 <- hel_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+hel_men_100m_14 <- hel_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+hel_men_100m_15 <- hel_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+hel_men_100m_16 <- hel_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+hel_men_100m_17 <- hel_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+hel_men_100m_18 <- hel_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+hel_men_100m_19 <- hel_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+
+hel_men_100m_all <- bind_rows(hel_men_100m_1, hel_men_100m_2, hel_men_100m_3, hel_men_100m_4, hel_men_100m_5, hel_men_100m_6, hel_men_100m_7, hel_men_100m_8, hel_men_100m_9, hel_men_100m_10, hel_men_100m_11, hel_men_100m_12, hel_men_100m_13, hel_men_100m_14, hel_men_100m_15, hel_men_100m_16, hel_men_100m_17, hel_men_100m_18, hel_men_100m_19)
+
+hel_men_100m_all <- hel_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1952,"Host City" ="Helsinki", "Host Country"="Finland")
+
+hel_men_100m_all[107,1]<- "Gold"
+hel_men_100m_all[108,1]<- "Silver"
+hel_men_100m_all[109,1]<- "Bronze"
+
+head(hel_men_100m_all)
+```
+
+#### London 1948
+```{r}
+lon48_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1948_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-lon48_men_100m%>%html_table(fill=TRUE)
+lon48_men_100m_1<-tables[[6]]
+  lon48_men_100m_1[4,4] <- as.factor(11.25)
+  lon48_men_100m_1[5,4] <- as.factor(11.54)
+lon48_men_100m_2<-tables[[7]]
+  lon48_men_100m_2[4,4] <- as.factor(11.16)
+  lon48_men_100m_2[5,4] <- as.factor(11.50)
+  lon48_men_100m_2[6,4] <- as.factor(11.97)
+lon48_men_100m_3<-tables[[8]]
+lon48_men_100m_4<-tables[[9]]
+  lon48_men_100m_4[4,4] <- as.factor(11.04)
+  lon48_men_100m_4[5,4] <- as.factor(11.23)
+lon48_men_100m_5<-tables[[10]]
+  lon48_men_100m_5[4,4] <- as.factor(11.30)
+lon48_men_100m_6<-tables[[11]]
+  lon48_men_100m_6[4,4] <- as.factor(11.08)
+  lon48_men_100m_6[5,4] <- as.factor(11.32)
+  lon48_men_100m_6[6,4] <- as.factor(11.69)
+lon48_men_100m_7<-tables[[12]]
+  lon48_men_100m_7[4,4] <- as.factor(11.24)
+  lon48_men_100m_7[5,4] <- as.factor(11.71)
+  lon48_men_100m_7[6,4] <- as.factor(11.90)
+lon48_men_100m_8<-tables[[13]]
+  lon48_men_100m_8[4,4] <- as.factor(11.09)
+  lon48_men_100m_8[5,4] <- as.factor(11.09)
+lon48_men_100m_9<-tables[[14]]
+  lon48_men_100m_9[4,4] <- as.factor(11.22)
+  lon48_men_100m_9[5,4] <- as.factor(11.35)
+lon48_men_100m_10<-tables[[15]]
+  lon48_men_100m_10[4,4] <- as.factor(11.19)
+  lon48_men_100m_10[5,4] <- as.factor(11.62)
+lon48_men_100m_11<-tables[[16]]
+  lon48_men_100m_11[4,4] <- as.factor(11.23)
+lon48_men_100m_12<-tables[[17]]
+  lon48_men_100m_12[4,4] <- as.factor(11.36)
+  lon48_men_100m_12[5,4] <- as.factor(11.45)
+  lon48_men_100m_12[6,4] <- as.factor(11.78)
+lon48_men_100m_13<-tables[[18]]
+  lon48_men_100m_13[4,4] <- as.factor(10.93)
+  lon48_men_100m_13[5,4] <- as.factor(10.97)
+  lon48_men_100m_13[6,4] <- as.factor(11.32)
+lon48_men_100m_14<-tables[[19]]
+  lon48_men_100m_14[4,4] <- as.factor(11.04)
+  lon48_men_100m_14[5,4] <- as.factor(11.11)
+  lon48_men_100m_14[6,4] <- as.factor(11.18)
+lon48_men_100m_15<-tables[[20]]
+  lon48_men_100m_15[4,4] <- as.factor(10.82)
+  lon48_men_100m_15[5,4] <- as.factor(11.08)
+  lon48_men_100m_15[6,4] <- as.factor(11.10)
+lon48_men_100m_16<-tables[[21]]
+  lon48_men_100m_16[4,4] <- as.factor(11.04)
+  lon48_men_100m_16[5,4] <- as.factor(11.09)
+  lon48_men_100m_16[6,4] <- as.factor(11.26)
+lon48_men_100m_17<-tables[[22]]
+  lon48_men_100m_17[4,4] <- as.factor(10.98)
+  lon48_men_100m_17[5,4] <- as.factor(11.05)
+  lon48_men_100m_17[6,4] <- as.factor(11.15)
+lon48_men_100m_18<-tables[[23]]
+  lon48_men_100m_18[4,4] <- as.factor(10.74)
+  lon48_men_100m_18[5,4] <- as.factor(10.82)
+  lon48_men_100m_18[6,4] <- as.factor(11.01)
+lon48_men_100m_19<-tables[[24]]
+  lon48_men_100m_19[4,4,] <- as.factor(10.61)
+  lon48_men_100m_19[5,4,] <- as.factor(10.67)
+  lon48_men_100m_19[6,4,] <- as.factor(10.81)
+
+names(lon48_men_100m_19)[4] <- "Time"
+
+lon48_men_100m_1 <- lon48_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+lon48_men_100m_2 <- lon48_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+lon48_men_100m_3 <- lon48_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+lon48_men_100m_4 <- lon48_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+lon48_men_100m_5 <- lon48_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+lon48_men_100m_6 <- lon48_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+lon48_men_100m_7 <- lon48_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+lon48_men_100m_8 <- lon48_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+lon48_men_100m_9 <- lon48_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+lon48_men_100m_10 <- lon48_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+lon48_men_100m_11 <- lon48_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+lon48_men_100m_12 <- lon48_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+lon48_men_100m_13 <- lon48_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+lon48_men_100m_14 <- lon48_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+lon48_men_100m_15 <- lon48_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+lon48_men_100m_16 <- lon48_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+lon48_men_100m_17 <- lon48_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+lon48_men_100m_18 <- lon48_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+lon48_men_100m_19 <- lon48_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+
+lon48_men_100m_all <- bind_rows(lon48_men_100m_1, lon48_men_100m_2, lon48_men_100m_3, lon48_men_100m_4, lon48_men_100m_5, lon48_men_100m_6, lon48_men_100m_7, lon48_men_100m_8, lon48_men_100m_9, lon48_men_100m_10, lon48_men_100m_11, lon48_men_100m_12, lon48_men_100m_13, lon48_men_100m_14, lon48_men_100m_15, lon48_men_100m_16, lon48_men_100m_17, lon48_men_100m_18, lon48_men_100m_19)
+
+lon48_men_100m_all <- lon48_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1948,"Host City" ="London", "Host Country"="United Kingdom")
+
+lon48_men_100m_all[97,1]<- "Gold"
+lon48_men_100m_all[98,1]<- "Silver"
+lon48_men_100m_all[99,1]<- "Bronze"
+
+head(lon48_men_100m_all)
+```
+
+#### Berlin 1936
+```{r}
+ber_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1936_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-ber_men_100m%>%html_table(fill=TRUE)
+ber_men_100m_1<-tables[[5]]
+ber_men_100m_2<-tables[[6]]
+ber_men_100m_3<-tables[[7]]
+ber_men_100m_4<-tables[[8]]
+ber_men_100m_5<-tables[[9]]
+ber_men_100m_6<-tables[[10]]
+ber_men_100m_7<-tables[[11]]
+ber_men_100m_8<-tables[[12]]
+ber_men_100m_9<-tables[[13]]
+ber_men_100m_10<-tables[[14]]
+ber_men_100m_11<-tables[[15]]
+ber_men_100m_12<-tables[[16]]
+ber_men_100m_13<-tables[[17]]
+ber_men_100m_14<-tables[[18]]
+ber_men_100m_15<-tables[[19]]
+ber_men_100m_16<-tables[[20]]
+ber_men_100m_17<-tables[[21]]
+ber_men_100m_18<-tables[[22]]
+ber_men_100m_19<-tables[[23]]
+
+ber_men_100m_1 <- ber_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+ber_men_100m_2 <- ber_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+ber_men_100m_3 <- ber_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+ber_men_100m_4 <- ber_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+ber_men_100m_5 <- ber_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+ber_men_100m_6 <- ber_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+ber_men_100m_7 <- ber_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+ber_men_100m_8 <- ber_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+ber_men_100m_9 <- ber_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+ber_men_100m_10 <- ber_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+ber_men_100m_11 <- ber_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+ber_men_100m_12 <- ber_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+ber_men_100m_13 <- ber_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ber_men_100m_14 <- ber_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ber_men_100m_15 <- ber_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ber_men_100m_16 <- ber_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ber_men_100m_17 <- ber_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ber_men_100m_18 <- ber_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ber_men_100m_19 <- ber_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+ber_men_100m_all <- bind_rows(ber_men_100m_1, ber_men_100m_2, ber_men_100m_3, ber_men_100m_4, ber_men_100m_5, ber_men_100m_6, ber_men_100m_7, ber_men_100m_8, ber_men_100m_9, ber_men_100m_10, ber_men_100m_11, ber_men_100m_12, ber_men_100m_13, ber_men_100m_14, ber_men_100m_15, ber_men_100m_16, ber_men_100m_17, ber_men_100m_18, ber_men_100m_19)
+
+ber_men_100m_all <- ber_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1936,"Host City" ="Berlin", "Host Country"="Germany")
+
+ber_men_100m_all[70,1]<- "Gold"
+ber_men_100m_all[71,1]<- "Silver"
+ber_men_100m_all[72,1]<- "Bronze"
+
+head(ber_men_100m_all)
+```
+
+#### Los Angeles 1932
+```{r}
+los32_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1932_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-los32_men_100m%>%html_table(fill=TRUE)
+los32_men_100m_1<-tables[[5]]
+los32_men_100m_2<-tables[[6]]
+los32_men_100m_3<-tables[[7]]
+los32_men_100m_4<-tables[[8]]
+los32_men_100m_5<-tables[[9]]
+los32_men_100m_6<-tables[[10]]
+los32_men_100m_7<-tables[[11]]
+los32_men_100m_8<-tables[[12]]
+los32_men_100m_9<-tables[[13]]
+los32_men_100m_10<-tables[[14]]
+los32_men_100m_11<-tables[[15]]
+los32_men_100m_12<-tables[[16]]
+los32_men_100m_13<-tables[[17]]
+los32_men_100m_14<-tables[[18]]
+
+los32_men_100m_1 <- los32_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+los32_men_100m_2 <- los32_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+los32_men_100m_3 <- los32_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+los32_men_100m_4 <- los32_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+los32_men_100m_5 <- los32_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+los32_men_100m_6 <- los32_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+los32_men_100m_7 <- los32_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+los32_men_100m_8 <- los32_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los32_men_100m_9 <- los32_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los32_men_100m_10 <- los32_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los32_men_100m_11 <- los32_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+los32_men_100m_12 <- los32_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+los32_men_100m_13 <- los32_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+los32_men_100m_14 <- los32_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+los32_men_100m_all <- bind_rows(los32_men_100m_1, los32_men_100m_2, los32_men_100m_3, los32_men_100m_4, los32_men_100m_5, los32_men_100m_6, los32_men_100m_7, los32_men_100m_8, los32_men_100m_9, los32_men_100m_10, los32_men_100m_11, los32_men_100m_12, los32_men_100m_13, los32_men_100m_14)
+
+los32_men_100m_all <- los32_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1932,"Host City" ="Los Angeles", "Host Country"="United States")
+
+los32_men_100m_all[64,1]<- "Gold"
+los32_men_100m_all[65,1]<- "Silver"
+los32_men_100m_all[66,1]<- "Bronze"
+
+head(los32_men_100m_all)
+```
+
+#### Amsterdam 1928
+```{r}
+ams_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1928_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-ams_men_100m%>%html_table(fill=TRUE)
+ams_men_100m_1<-tables[[5]]
+ams_men_100m_2<-tables[[6]]
+ams_men_100m_3<-tables[[7]]
+ams_men_100m_4<-tables[[8]]
+ams_men_100m_5<-tables[[9]]
+ams_men_100m_6<-tables[[10]]
+ams_men_100m_7<-tables[[11]]
+ams_men_100m_8<-tables[[12]]
+ams_men_100m_9<-tables[[13]]
+ams_men_100m_10<-tables[[14]]
+ams_men_100m_11<-tables[[15]]
+ams_men_100m_12<-tables[[16]]
+ams_men_100m_13<-tables[[17]]
+ams_men_100m_14<-tables[[18]]
+ams_men_100m_15<-tables[[19]]
+ams_men_100m_16<-tables[[20]]
+ams_men_100m_17<-tables[[21]]
+ams_men_100m_18<-tables[[22]]
+ams_men_100m_19<-tables[[23]]
+ams_men_100m_20<-tables[[24]]
+ams_men_100m_21<-tables[[25]]
+ams_men_100m_22<-tables[[26]]
+ams_men_100m_23<-tables[[27]]
+ams_men_100m_24<-tables[[28]]
+ams_men_100m_25<-tables[[29]]
+
+ams_men_100m_1 <- ams_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+ams_men_100m_2 <- ams_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+ams_men_100m_3 <- ams_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+ams_men_100m_4 <- ams_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+ams_men_100m_5 <- ams_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+ams_men_100m_6 <- ams_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+ams_men_100m_7 <- ams_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+ams_men_100m_8 <- ams_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+ams_men_100m_9 <- ams_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+ams_men_100m_10 <- ams_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+ams_men_100m_11 <- ams_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+ams_men_100m_12 <- ams_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+ams_men_100m_13 <- ams_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "13")
+ams_men_100m_14 <- ams_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "14")
+ams_men_100m_15 <- ams_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "15")
+ams_men_100m_16 <- ams_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "16")
+ams_men_100m_17 <- ams_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_18 <- ams_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_19 <- ams_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_20 <- ams_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_21 <- ams_men_100m_21 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_22 <- ams_men_100m_22 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ams_men_100m_23 <- ams_men_100m_23 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ams_men_100m_24 <- ams_men_100m_24 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ams_men_100m_25 <- ams_men_100m_25 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+ams_men_100m_all <- bind_rows(ams_men_100m_1, ams_men_100m_2, ams_men_100m_3, ams_men_100m_4, ams_men_100m_5, ams_men_100m_6, ams_men_100m_7, ams_men_100m_8, ams_men_100m_9, ams_men_100m_10, ams_men_100m_11, ams_men_100m_12, ams_men_100m_13, ams_men_100m_14, ams_men_100m_15, ams_men_100m_16, ams_men_100m_17, ams_men_100m_18, ams_men_100m_19, ams_men_100m_20, ams_men_100m_21, ams_men_100m_22, ams_men_100m_23, ams_men_100m_24, ams_men_100m_25)
+
+ams_men_100m_all <- ams_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1928,"Host City" ="Amsterdam", "Host Country"="Netherlands")
+
+ams_men_100m_all[56,1]<- "Gold"
+ams_men_100m_all[57,1]<- "Silver"
+ams_men_100m_all[58,1]<- "Bronze"
+
+head(ams_men_100m_all)
+```
+
+#### Paris 1924
+```{r}
+par_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1924_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-par_men_100m%>%html_table(fill=TRUE)
+par_men_100m_1<-tables[[5]]
+par_men_100m_2<-tables[[6]]
+par_men_100m_3<-tables[[7]]
+par_men_100m_4<-tables[[8]]
+par_men_100m_5<-tables[[9]]
+par_men_100m_6<-tables[[10]]
+par_men_100m_7<-tables[[11]]
+par_men_100m_8<-tables[[12]]
+par_men_100m_9<-tables[[13]]
+par_men_100m_10<-tables[[14]]
+par_men_100m_11<-tables[[15]]
+par_men_100m_12<-tables[[16]]
+par_men_100m_13<-tables[[17]]
+par_men_100m_14<-tables[[18]]
+par_men_100m_15<-tables[[19]]
+par_men_100m_16<-tables[[20]]
+par_men_100m_17<-tables[[21]]
+par_men_100m_18<-tables[[22]]
+par_men_100m_19<-tables[[23]]
+par_men_100m_20<-tables[[24]]
+par_men_100m_21<-tables[[25]]
+par_men_100m_22<-tables[[26]]
+par_men_100m_23<-tables[[27]]
+par_men_100m_24<-tables[[28]]
+par_men_100m_25<-tables[[29]]
+par_men_100m_26<-tables[[30]]
+
+par_men_100m_1 <- par_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+par_men_100m_2 <- par_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+par_men_100m_3 <- par_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+par_men_100m_4 <- par_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+par_men_100m_5 <- par_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+par_men_100m_6 <- par_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+par_men_100m_7 <- par_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+par_men_100m_8 <- par_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+par_men_100m_9 <- par_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+par_men_100m_10 <- par_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+par_men_100m_11 <- par_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+par_men_100m_12 <- par_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+par_men_100m_13 <- par_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "13")
+par_men_100m_14 <- par_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "14")
+par_men_100m_15 <- par_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "15")
+par_men_100m_16 <- par_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "16")
+par_men_100m_17 <- par_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "17")
+par_men_100m_18 <- par_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_19 <- par_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_20 <- par_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_21 <- par_men_100m_21 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_22 <- par_men_100m_22 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_23 <- par_men_100m_23 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+par_men_100m_24 <- par_men_100m_24 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+par_men_100m_25 <- par_men_100m_25 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+par_men_100m_26 <- par_men_100m_26 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+
+par_men_100m_all <- bind_rows(par_men_100m_1, par_men_100m_2, par_men_100m_3, par_men_100m_4, par_men_100m_5, par_men_100m_6, par_men_100m_7, par_men_100m_8, par_men_100m_9, par_men_100m_10, par_men_100m_11, par_men_100m_12, par_men_100m_13, par_men_100m_14, par_men_100m_15, par_men_100m_16, par_men_100m_17, par_men_100m_18, par_men_100m_19, par_men_100m_20, par_men_100m_21, par_men_100m_22, par_men_100m_23, par_men_100m_24, par_men_100m_25, par_men_100m_26)
+
+par_men_100m_all <- par_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1924,"Host City" ="Paris", "Host Country"="France")
+
+par_men_100m_all[83,1]<- "Gold"
+par_men_100m_all[84,1]<- "Silver"
+par_men_100m_all[85,1]<- "Bronze"
+
+head(par_men_100m_all)
+```
+
+
+#### Antwerp 1920
+```{r}
+ant_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1920_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-ant_men_100m%>%html_table(fill=TRUE)
+ant_men_100m_1<-tables[[6]]
+ant_men_100m_2<-tables[[7]]
+ant_men_100m_3<-tables[[8]]
+ant_men_100m_4<-tables[[9]]
+ant_men_100m_5<-tables[[10]]
+ant_men_100m_6<-tables[[11]]
+ant_men_100m_7<-tables[[12]]
+ant_men_100m_8<-tables[[13]]
+ant_men_100m_9<-tables[[14]]
+ant_men_100m_10<-tables[[15]]
+ant_men_100m_11<-tables[[16]]
+ant_men_100m_12<-tables[[17]]
+ant_men_100m_13<-tables[[18]]
+ant_men_100m_14<-tables[[19]]
+ant_men_100m_15<-tables[[20]]
+ant_men_100m_16<-tables[[21]]
+ant_men_100m_17<-tables[[22]]
+ant_men_100m_18<-tables[[23]]
+ant_men_100m_19<-tables[[24]]
+ant_men_100m_20<-tables[[25]]
+
+ant_men_100m_1 <- ant_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+ant_men_100m_2 <- ant_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+ant_men_100m_3 <- ant_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+ant_men_100m_4 <- ant_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+ant_men_100m_5 <- ant_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+ant_men_100m_6 <- ant_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+ant_men_100m_7 <- ant_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+ant_men_100m_8 <- ant_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+ant_men_100m_9 <- ant_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+ant_men_100m_10 <- ant_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+ant_men_100m_11 <- ant_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+ant_men_100m_12 <- ant_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+ant_men_100m_13 <- ant_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ant_men_100m_14 <- ant_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ant_men_100m_15 <- ant_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ant_men_100m_16 <- ant_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ant_men_100m_17 <- ant_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Quarter Final")
+ant_men_100m_18 <- ant_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ant_men_100m_19 <- ant_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+ant_men_100m_20 <- ant_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+ant_men_100m_all <- bind_rows(ant_men_100m_1, ant_men_100m_2, ant_men_100m_3, ant_men_100m_4, ant_men_100m_5, ant_men_100m_6, ant_men_100m_7, ant_men_100m_8, ant_men_100m_9, ant_men_100m_10, ant_men_100m_11, ant_men_100m_12, ant_men_100m_13, ant_men_100m_14, ant_men_100m_15, ant_men_100m_16, ant_men_100m_17, ant_men_100m_18, ant_men_100m_19, ant_men_100m_20)
+
+ant_men_100m_all <- ant_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1920,"Host City" ="Antwerp", "Host Country"="Belgium")
+
+ant_men_100m_all[60,1]<- "Gold"
+ant_men_100m_all[61,1]<- "Silver"
+ant_men_100m_all[62,1]<- "Bronze"
+
+head(ant_men_100m_all)
+```
+
+#### Stockholm 1912 
+```{r}
+sto_men_100m<-read_html("https://en.wikipedia.org/wiki/Athletics_at_the_1912_Summer_Olympics_%E2%80%93_Men%27s_100_metres")
+tables<-sto_men_100m%>%html_table(fill=TRUE)
+sto_men_100m_1<-tables[[5]]
+sto_men_100m_2<-tables[[6]]
+sto_men_100m_3<-tables[[7]]
+sto_men_100m_4<-tables[[8]]
+sto_men_100m_5<-tables[[9]]
+sto_men_100m_6<-tables[[10]]
+sto_men_100m_7<-tables[[11]]
+sto_men_100m_8<-tables[[12]]
+sto_men_100m_9<-tables[[13]]
+sto_men_100m_10<-tables[[14]]
+sto_men_100m_11<-tables[[15]]
+sto_men_100m_12<-tables[[16]]
+sto_men_100m_13<-tables[[17]]
+sto_men_100m_14<-tables[[18]]
+sto_men_100m_15<-tables[[19]]
+sto_men_100m_16<-tables[[20]]
+sto_men_100m_17<-tables[[21]]
+sto_men_100m_18<-tables[[22]]
+sto_men_100m_19<-tables[[23]]
+sto_men_100m_20<-tables[[24]]
+sto_men_100m_21<-tables[[25]]
+sto_men_100m_22<-tables[[26]]
+sto_men_100m_23<-tables[[27]]
+sto_men_100m_24<-tables[[28]]
+
+sto_men_100m_1 <- sto_men_100m_1 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "1")
+sto_men_100m_2 <- sto_men_100m_2 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "2")
+sto_men_100m_3 <- sto_men_100m_3 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "3")
+sto_men_100m_4 <- sto_men_100m_4 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "4")
+sto_men_100m_5 <- sto_men_100m_5 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "5")
+sto_men_100m_6 <- sto_men_100m_6 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "6")
+sto_men_100m_7 <- sto_men_100m_7 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "7")
+sto_men_100m_8 <- sto_men_100m_8 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "8")
+sto_men_100m_9 <- sto_men_100m_9 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "9")
+sto_men_100m_10 <- sto_men_100m_10 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "10")
+sto_men_100m_11 <- sto_men_100m_11 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "11")
+sto_men_100m_12 <- sto_men_100m_12 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "12")
+sto_men_100m_13 <- sto_men_100m_13 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "13")
+sto_men_100m_14 <- sto_men_100m_14 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "14")
+sto_men_100m_15 <- sto_men_100m_15 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "15")
+sto_men_100m_16 <- sto_men_100m_16 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "16")
+sto_men_100m_17 <- sto_men_100m_17 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "17")
+sto_men_100m_18 <- sto_men_100m_18 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_19 <- sto_men_100m_19 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_20 <- sto_men_100m_20 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_21 <- sto_men_100m_21 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_22 <- sto_men_100m_22 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_23 <- sto_men_100m_23 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Semi Final")
+sto_men_100m_24 <- sto_men_100m_24 %>% transform(Time = as.numeric(Time), Rank = as.numeric(Rank)) %>% mutate(Heat = "Final")
+
+sto_men_100m_all <- bind_rows(sto_men_100m_1, sto_men_100m_2, sto_men_100m_3, sto_men_100m_4, sto_men_100m_5, sto_men_100m_6, sto_men_100m_7, sto_men_100m_8, sto_men_100m_9, sto_men_100m_10, sto_men_100m_11, sto_men_100m_12, sto_men_100m_13, sto_men_100m_14, sto_men_100m_15, sto_men_100m_16, sto_men_100m_17, sto_men_100m_18, sto_men_100m_19, sto_men_100m_20, sto_men_100m_21, sto_men_100m_22, sto_men_100m_23, sto_men_100m_24)
+
+sto_men_100m_all <- sto_men_100m_all %>%
+  filter(!is.na(Time))%>%
+  add_column("Year"=1912,"Host City" ="Stockholm", "Host Country"="Sweden")
+
+sto_men_100m_all[28,1]<- "Gold"
+sto_men_100m_all[29,1]<- "Silver"
+sto_men_100m_all[30,1]<- "Bronze"
+
+head(sto_men_100m_all)
+```
+
+#### Combining All Mens 100m Data (All Heats)
+```{r}
+mens_100m_all <- bind_rows(
+  rio_men_100m_all,
+  bei_men_100m_all,
+  lon12_men_100m_all,
+  ath_men_100m_all,
+  syd_men_100m_all,
+  atl_men_100m_all,
+  bar_men_100m_all,
+  seo_men_100m_all,
+  los_men_100m_all,
+  mos_men_100m_all,
+  mon_men_100m_all,
+  mun_men_100m_all,
+  mex_men_100m_all,
+  tok_men_100m_all,
+  rom_men_100m_all,
+  mel_men_100m_all,
+  hel_men_100m_all,
+  lon48_men_100m_all,
+  ber_men_100m_all,
+  los32_men_100m_all,
+  ams_men_100m_all,
+  par_men_100m_all,
+  ant_men_100m_all,
+  sto_men_100m_all)
+
+mens_100m_all <- mens_100m_all %>%
+  relocate("Year", "Host City", "Rank", "Time")
+
+head(mens_100m_all)
+```
+#### Here I'm pulling out the medals so that I can add a geom_point to my graphic of just the gold medal winners in relation to the whole distribution.
+```{r}
+mens_100m_gold <- mens_100m_all %>%
+  filter(Rank == "Gold")%>%
+  group_by(Year, Rank)
+
+head(mens_100m_gold)
+```
+
+#### Double checking the data points to make sure they look good.
+```{r}
+str(mens_100m_all)
+```
+
+```{r}
+levels(as.factor(mens_100m_all$`Host City`))
+```
+
+```{r}
+levels(as.factor(mens_100m_all$Nation))
+```
+
+#### Here I am taking the full set and adding a column for mean, median, minimum and maximum times each year. This will give a broader picture regarding whether or not only the minimum times (or medals) are decreasing or if the average times are also on a downward trend.
+```{r}
+mens_100m_mmm <- mens_100m_all %>%
+  select(Year, `Host City`, Time) %>%
+  group_by(Year)%>%
+  mutate(meanTime = mean(Time), medTime = median(Time), minTime = min(Time), maxTime = max(Time))
+
+head(mens_100m_mmm)
+```
+
+```{r}
+mens_100m_min <- mens_100m_mmm %>%
+  select(Year, minTime) %>%
+  group_by(Year)
+
+head(mens_100m_min)
+```
+
+#### Here I gathered the mean, median and minimum times into one column so that I could plot them more easily. 
+```{r}
+mens_100m_mmmm <- mens_100m_all %>%
+  select(Year, `Host City`, Time) %>%
+  group_by(Year)%>%
+  mutate(meanTime = mean(Time), medTime = median(Time), minTime = min(Time), maxTime = max(Time))
+
+mens_100m_mmmm <- gather(mens_100m_mmmm, 'Time Type', 'mmmTime', 4:7) %>%
+  mutate(minTime = min(Time))%>%
+  arrange(desc(Year))
+
+head(mens_100m_mmmm)
+```
+
+#### I am removing maximum time because that is irrelevant to my question and research.
+```{r}
+mens_100m_mmmm <- mens_100m_mmmm %>%
+  filter(`Time Type` != "maxTime")
+
+levels(as.factor(mens_100m_mmmm$'Time Type'))
+```
+
+#### Here I am filtering only the medal winners to see what the trend looks like for the gold, silver and bronze medalists.
+```{r}
+mens_100m_gsb <- mens_100m_all %>%
+  filter(Rank %in% c("Gold", "Silver", "Bronze"))%>%
+  group_by(Year)
+
+head(mens_100m_gsb)
+```
+
+#### As we would expect, a downward trend, but curious why there are a couple of noticeable humps there.
+```{r}
+mens_100m_gsbplot <- ggplot(mens_100m_gsb, aes(Year, Time, color = Rank))+
+  geom_point()+
+  geom_smooth(se=F, span = 0.5)+
+   labs(title = "Gold, Silver & Bronze Medals Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.title = element_text(family = "Courier"),
+        plot.subtitle = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        axis.title = element_text(family = "Courier"),
+         legend.key = element_rect(fill = "white"))+
+  scale_color_manual(values = c("#FFB48C", "#EBD739", "#B5BCC2"))
+
+mens_100m_gsbplot
+```
+
+#### Just messing around with visuals and giving the smooth a little wider span
+```{r}
+ggplot(mens_100m_gsb, aes(Year, Time, color = Rank))+
+  geom_point()+
+  geom_smooth(se=F, span = 0.37)+
+   labs(title = "Gold, Silver & Bronze Medals Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.title = element_text(family = "Courier"),
+        plot.subtitle = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        axis.title = element_text(family = "Courier"),
+         legend.key = element_rect(fill = "white"))+
+  scale_color_manual(values = c("#FFB48C", "#EBD739", "#B5BCC2"))+
+  scale_y_continuous(breaks = c(9, 9.5, 10, 10.5, 11),
+                     labels = c("9", "9.5", "10", "10.5", "11"))
+```
+
+#### Looking at the trend with a linear model
+```{r}
+ggplot(mens_100m_gsb, aes(Year, Time, color = Rank))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE)+
+   labs(title = "Gold, Silver & Bronze Medals Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.title = element_text(family = "Courier"),
+        plot.subtitle = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        axis.title = element_text(family = "Courier"),
+         legend.key = element_rect(fill = "white"))+
+  scale_color_manual(values = c("#FFB48C", "#EBD739", "#B5BCC2"))
+```
+
+#### After doing some research I discovered that there are major historical events that have impacted the two major humps that we see in the downward trend line. The first is World War II which took place between 1939-1945. This makes complete sense as to why the time would get slower again, because people were at war, the Olympics were cancelled and no one was training. Next, in 1967 the World Olympic Committee banned the use of performance enhancing drugs. At this point they actually stripped some titles 
+```{r}
+ggplot(mens_100m_gsb, aes(Year, Time, color = Rank))+
+  geom_point()+
+  geom_line()+
+  geom_rect(aes(xmin=1939, xmax=1945, ymin=9.5, ymax=10.9), color = "grey", linetype = "dotted", alpha = 0, size = 0.6)+
+  geom_vline(xintercept = 1967, color = "grey", linetype = 'dashed', size=0.6)+
+  labs(title = "Gold, Silver & Bronze Medals Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")+
+  theme(panel.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.title = element_text(family = "Courier"),
+        plot.subtitle = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        axis.title = element_text(family = "Courier"),
+        legend.key = element_rect(fill = "white"))+
+  scale_color_manual(values = c("#FFB48C", "#EBD739", "#B5BCC2"))+
+  geom_text(aes(1931, 9.6), label = "World War II", size = 5, family = "Courier", color = "grey")+
+  geom_text(aes(1975, 9.6), label = "PEDs Banned", size = 5, family = "Courier", color = "grey")
+```
+
+```{r}
+mens_100m_gsb_ani <- ggplot(mens_100m_gsb, aes(Year, Time, color = Rank, frame = Year))+
+  geom_point(size = 5, alpha = 0.6)+
+  geom_line()+
+   labs(title = "Gold, Silver & Bronze Medals Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.title = element_text(family = "Courier"),
+        plot.subtitle = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        axis.title = element_text(family = "Courier"),
+         legend.key = element_rect(fill = "white"))+
+  scale_color_manual(values = c("#FFB48C", "#EBD739", "#B5BCC2"))
+
+ggplotly(mens_100m_gsb_ani)
+```
+
+```{r}
+mens_100m_mmmplot <- ggplot(mens_100m_mmmm, aes(Year, mmmTime, color = `Time Type`))+
+  geom_point()+
+  geom_smooth(se = FALSE)+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        legend.title = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        legend.key = element_blank(),
+        axis.text = element_text(family = "Courier"),
+        axis.title = element_text(family = "Courier"))+
+  scale_y_continuous(limits = c(9.5, 11.25))+
+  scale_color_manual(values = c("#FC4E07", "#00CCFF", "#E7B800"))+
+  labs(title = "Minimum, Mean & Median Times Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")
+
+mens_100m_mmmplot
+```
+
+```{r}
+ggplot(mens_100m_mmmm, aes(Year, mmmTime, color = `Time Type`))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        legend.key = element_blank(),
+        legend.title = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        axis.title = element_text(family = "Courier"))+
+  scale_y_continuous(limits = c(9.5, 11.25))+
+  scale_color_manual(values = c("#FC4E07", "#00AFBB", "#E7B800"))+
+  labs(title = "Minimum, Mean & Median Times Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")
+```
+
+```{r}
+mens_100m_mmm_ani <- ggplot(mens_100m_mmmm, aes(Year, mmmTime, color = `Time Type`, frame = Year))+
+  geom_point(size = 5)+
+  theme(panel.background = element_blank(),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = element_text(family = "Courier"),
+        axis.text = element_text(family = "Courier"),
+        axis.title = element_text(family = "Courier"),
+        legend.background = element_blank(),
+        legend.title = element_text(family = "Courier"),
+        legend.text = element_text(family = "Courier"))+
+  scale_color_manual(values = c("#FC4E07", "#00AFBB", "#E7B800"))+
+  labs(title = "Minimum, Mean & Median Times Over 100 Years",
+       subtitle = "Mens 100m Dash",
+       y = "Time (in seconds)")
+
+ggplotly(mens_100m_mmm_ani)
+```
+
+### Plotting the distributions of all the heats from all of the years of olympics. This also includes gold medals visualized on each distribution. As we can see here, not every year did the gold medalist have the fastest time. The fastest times actually occured in an earlier heat. 1 year the gold medalist with the fastest time was disqualified. 2 other years someone other than the gold medalist ran a faster time in an earlier heat. You can also see the historical events represented here that contributed to decreased speeds, WWII and PEDs banned. The other story this shows is that not only the fastest times are getting faster... but the distribution of all participants is collective gaining speed and getting faster times. There is a definitely change from the distribution of 1912 and 1920 to 2016. 
+```{r}
+mens_100m_box <- ggplot()+
+  geom_boxplot(data = atl_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = rio_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = bei_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = lon12_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = ath_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = syd_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = atl_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = bar_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = seo_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = los_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = mos_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = mon_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = mun_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = mex_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = tok_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = rom_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = mel_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = hel_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = lon48_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = ber_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = los32_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = ams_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = par_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = ant_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_boxplot(data = sto_men_100m_all, aes(Time, Year), fill = "oldlace")+
+  geom_point(data = mens_100m_gold, aes(Time, Year, color = "Rank"), color = "yellow", size=2)+
+  coord_flip()+
+  theme(panel.background = element_rect(fill = "#00CCFF"), 
+        plot.background = element_rect(fill = "#00CCFF"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        plot.title = element_text(family = "Courier-Bold", color = "grey20"),
+        plot.subtitle = element_text(color = "grey20", family = "Courier"),
+        axis.text = element_text(color = "grey20", family = "Courier"),
+        axis.title = element_text(color = "grey20", family = "Courier-Bold"),
+        axis.ticks = element_blank())+
+  labs(title = "Are Humans Collectively Gaining Speed?",
+       subtitle = "100 Years of Mens 100m Race Times at the Olympics")+
+  scale_x_continuous("Time (in seconds)", limits = c(9.25,12.75), expand = c(0,0))+
+  scale_y_continuous(breaks = c(1912, 1920, 1928, 1936, 1944, 1952, 1960, 1968, 1976, 1984, 1992, 2000, 2008, 2016),
+                     labels = c("1912", "1920", "1928", "1936", "1944", "1952", "1960", "1968", "1976", "1984", "1992", "2000", "2008", "2016"))+
+  geom_hline(yintercept = 1967, size = 1, color = "oldlace", linetype = 'dotted')+
+  geom_rect(aes(xmin=9.25, xmax=12.75, ymin=1939, ymax=1945), fill="oldlace", color = "oldlace", linetype = "dotted", alpha = 0.2, size = 0.8)+
+  geom_text(aes(9.5, 1933.5), label = "World War II", size = 4.2, family = "Courier-Bold", color = "white")+
+  geom_text(aes(9.5, 1972), label = "PEDs Banned", size = 4.2, family = "Courier-Bold", color = "white")
+
+mens_100m_box
+```
+
+
+### The rest of this is just testing out things that I was not able to complete. Please disregard the rest of this. 
+```{r}
+write.csv(mens_100m_min, "/Users/rochellerafn/RStudio Files/mens_100m_min.csv")
+```
+
+```{r}
+library(readxl)
+
+mens_100m_change1 <- read_xlsx("/Users/rochellerafn/RStudio Files/mens_100m_min.xlsx", sheet = 2, col_names = c("Year", "minTime", "Change"))
+
+mens_100m_change1 <- mens_100m_change1 %>%
+  filter(!is.na(Change)) %>%
+  transform(Change = as.numeric(Change))
+  
+mens_100m_change1
+```
+
+```{r}
+ggplot(mens_100m_change1, aes(Year, Change))+
+  geom_col()
+```
+
+```{r}
+mens_100m_change2 <- read_xlsx("/Users/rochellerafn/RStudio Files/mens_100m_min.xlsx", sheet = 3, col_names = c("Year", "minTime", "Change", "Change2"))
+
+mens_100m_change2 <- mens_100m_change2 %>%
+  filter(!is.na(Change)) %>%
+  transform(Change = as.numeric(Change), Change2 = as.numeric(Change2))
+  
+mens_100m_change2
+```
+
+```{r}
+ggplot(mens_100m_change2, aes(Year, Change2))+
+  geom_col()
+```
+
+```{r}
+mens_100m_change3 <- read_xlsx("/Users/rochellerafn/RStudio Files/mens_100m_min.xlsx", sheet = 4, col_names = c("Year", "minTime", "Change", "Change3"))
+
+mens_100m_change3 <- mens_100m_change3 %>%
+  filter(!is.na(Change)) %>%
+  transform(Change = as.numeric(Change), Change3 = as.numeric(Change3))
+  
+mens_100m_change3
+```
+
+```{r}
+ggplot(mens_100m_change3, aes(Year, Change3))+
+  geom_col()
+```
+
+```{r}
+mens_100m_nations <- mens_100m_all %>%
+  group_by(Year, Time)%>%
+  count(Nation)%>%
+  arrange(Year)
+
+mens_100m_nations
+```
+
+```{r}
+library(countrycode)
+
+country_code <- countrycode(mens_100m_nations$Nation, origin = 'country.name', destination = 'iso3c')
+
+country_code
+```
+
+```{r}
+mens_100m_ncodes <- mens_100m_nations %>%
+  add_column('Country Code' = country_code)
+
+mens_100m_ncodes
+```
+
+```{r}
+mens_100m_ncodes %>%
+  group_by(Nation)%>%
+  filter(is.na(`Country Code`))
+```
+
+
+
+```{r}
+# load library
+library(rworldmap)
+# get map
+worldmap <- getMap(resolution = "coarse")
+# plot world map
+plot(worldmap, col = "white", 
+     fill = T, border = "darkgray",
+     xlim = c(-180, 180), ylim = c(-90, 90),
+     bg = "aliceblue",
+     asp = 1, wrap=c(-180,180))
+```
+
+#### Nope! Too busy lol... 
+```{r}
+library(gridExtra)
+
+grid.arrange(arrangeGrob(mens_100m_gsbplot, mens_100m_mmmplot, ncol=2, widths=c(2, 2)),
+             mens_100m_box, nrow=2)
+```
+
+```{r}
+write.csv(mens_100m_gsb, "/Users/rochellerafn/RStudio Files/mens_100m_gsb.csv")
+```
+
+```{r}
+write.csv(mens_100m_mmm, "/Users/rochellerafn/RStudio Files/mens_100m_mmm.csv")
+```
+
+#### Exponential Regression in R - lm(log(y)~x) 
+```{r}
+model_mmm <- lm(log(mens_100m_mmmm$mmmTime)~mens_100m_mmmm$Year)
+
+summary(model_mmm)
+```
+
+```{r}
+model_gsb <- lm(log(mens_100m_gsb$Time)~mens_100m_gsb$Year)
+
+summary(model_gsb)
+```
+
+
